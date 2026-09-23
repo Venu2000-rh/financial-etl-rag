@@ -4,7 +4,7 @@ A local Python ETL pipeline that extracts public financial data, cleans and
 joins it, and flattens it into a RAG-ready gold layer — natural-language
 documents optimized for semantic retrieval.
 
-🔗 **[View the project walkthrough](https://your-username.github.io/financial-etl-rag/)**
+🔗 **[View the project walkthrough](https://Venu2000-rh.github.io/financial-etl-rag/)**
 
 ## What it does
 
@@ -12,7 +12,7 @@ Pulls real stock market data and SEC regulatory filings for a handful of
 public companies, cleans and joins them into unified company records, then
 transforms each record into a short natural-language document — ready to
 feed directly into a RAG chatbot (see the companion
-[rag-chatbot](https://github.com/your-username/rag-chatbot) project).
+[rag-chatbot](https://github.com/Venu2000-rh/rag-chatbot) project).
 
 ## How it works
 
