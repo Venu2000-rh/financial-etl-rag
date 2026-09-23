@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Financial Data ETL Pipeline for RAG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --charcoal:#22242B;
+    --gold:#B8902E;
+    --green:#3C6E4F;
+    --cream:#F4EFE6;
+    --paper:#FBF9F4;
+    --ink-soft:#6B6558;
+    --line:#E1DACB;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;background:var(--cream);color:var(--charcoal);
+    font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:64px 24px 80px;}
+  header{margin-bottom:52px;border-bottom:1px solid var(--line);padding-bottom:36px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;font-size:12.5px;
+    color:var(--green);margin-bottom:16px;
+  }
+  h1{
+    font-family:'Fraunces',serif;font-weight:600;
+    font-size:clamp(28px,4vw,40px);line-height:1.18;margin:0 0 16px;
+  }
+  .lede{font-size:16.5px;line-height:1.65;color:var(--ink-soft);max-width:660px;margin:0 0 20px;}
+  .stack{display:flex;flex-wrap:wrap;gap:8px;}
+  .pill{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;
+    padding:5px 11px;border:1px solid var(--line);border-radius:3px;
+    background:var(--paper);
+  }
+
+  .lane-title{
+    font-family:'IBM Plex Mono',monospace;font-size:11.5px;
+    color:var(--ink-soft);margin:40px 0 14px;
+    padding-bottom:8px;border-bottom:1px solid var(--line);
+  }
+
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
+  .row.single{grid-template-columns:1fr;}
+  .card{
+    background:var(--paper);border:1px solid var(--line);
+    padding:20px 22px;position:relative;
+  }
+  .card.source{border-left:3px solid var(--gold);}
+  .card.transform{border-left:3px solid var(--green);}
+  .card.output{border-left:3px solid var(--charcoal);}
+  .card h3{
+    font-family:'Fraunces',serif;font-size:17px;font-weight:600;margin:0 0 8px;
+  }
+  .card p{margin:0;font-size:14px;line-height:1.6;color:var(--ink-soft);}
+  .card .step-no{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft);
+    margin-bottom:6px;letter-spacing:.03em;
+  }
+
+  .arrow-down{
+    text-align:center;color:var(--ink-soft);font-size:20px;
+    margin:2px 0 18px;
+  }
+
+  footer{
+    margin-top:52px;padding-top:26px;border-top:1px solid var(--line);
+    font-size:13.5px;color:var(--ink-soft);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  }
+  footer a{color:var(--charcoal);text-decoration:none;border-bottom:1px solid var(--gold);}
+
+  @media (max-width:640px){
+    .row{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">PROJECT WALKTHROUGH</div>
+    <h1>Financial Data ETL Pipeline for RAG</h1>
+    <p class="lede">A local Python ETL pipeline that turns public market data and SEC regulatory filings into a RAG-ready gold layer — one clean, retrievable document per company.</p>
+    <div class="stack">
+      <span class="pill">Yahoo Finance API</span>
+      <span class="pill">SEC EDGAR API</span>
+      <span class="pill">Pandas</span>
+      <span class="pill">Python</span>
+    </div>
+  </header>
+
+  <div class="lane-title">01 — EXTRACT</div>
+  <div class="row">
+    <div class="card source">
+      <div class="step-no">SOURCE A</div>
+      <h3>Stock price history</h3>
+      <p>Pulled via the Yahoo Finance API (<code>yfinance</code>) — one year of daily prices plus company metadata (sector, market cap) per ticker.</p>
+    </div>
+    <div class="card source">
+      <div class="step-no">SOURCE B</div>
+      <h3>SEC regulatory filings</h3>
+      <p>Pulled via the SEC EDGAR Company Facts API — real filed figures (revenue, net income, assets), deeply nested across every historical filing.</p>
+    </div>
+  </div>
+
+  <div class="arrow-down">↓</div>
+
+  <div class="lane-title">02 — CLEAN &amp; TRANSFORM</div>
+  <div class="row">
+    <div class="card transform">
+      <div class="step-no">CLEAN A</div>
+      <h3>Derive price metrics</h3>
+      <p>Raw daily rows collapse into summary metrics: latest close, 52-week high/low, and 1-year percent change.</p>
+    </div>
+    <div class="card transform">
+      <div class="step-no">CLEAN B</div>
+      <h3>Filter to annual filings</h3>
+      <p>SEC JSON is filtered down to 10-K annual figures only, keeping the most recently filed value per tag and handling missing tags gracefully.</p>
+    </div>
+  </div>
+
+  <div class="arrow-down">↓</div>
+
+  <div class="lane-title">03 — JOIN &amp; FLATTEN</div>
+  <div class="row single">
+    <div class="card transform">
+      <div class="step-no">MERGE</div>
+      <h3>One unified record per company</h3>
+      <p>Price metrics, SEC fundamentals, and company metadata are joined by ticker into a single structured record per company.</p>
+    </div>
+  </div>
+  <div class="row single">
+    <div class="card output">
+      <div class="step-no">GOLD LAYER</div>
+      <h3>Flattened into natural-language documents</h3>
+      <p>Each joined record is rewritten as a short paragraph — the format a retrieval system can actually search semantically. This is the key difference from a traditional BI gold layer: retrievable text, not normalized tables.</p>
+    </div>
+  </div>
+
+  <div class="arrow-down">↓</div>
+
+  <div class="lane-title">04 — SERVE</div>
+  <div class="row single">
+    <div class="card output">
+      <div class="step-no">CONSUMED BY</div>
+      <h3>RAG chatbot</h3>
+      <p>The generated <code>.txt</code> documents feed directly into the chunking → embedding → retrieval pipeline of the companion RAG chatbot project, answering natural-language questions about company financials.</p>
+    </div>
+  </div>
+
+  <footer>
+    <span>Built with public data only — SEC EDGAR &amp; Yahoo Finance.</span>
+    <a href="https://github.com/your-username/financial-etl-rag">View source on GitHub →</a>
+  </footer>
+</div>
+</body>
+</html>
